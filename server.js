@@ -17,24 +17,27 @@ server.use(express.json());
 //Routers
 server.use("/api/v1/tasks", taskRouter);
 
-//_______________ Server Logic_________________
+//_______________ Server Logic_________________//
 
 // Quick overview of all tasks on the console.
-query.query("Select * from tasks", (err, res) => {
-  if (!err) {
-    console.log(res.rows);
-  } else {
-    console.error(err.message);
-  }
-});
+function showCurrentTable() {
+  query.query("Select * from tasks", (err, res) => {
+    if (!err) {
+      console.log(res.rows);
+    } else {
+      console.error(err.message);
+    }
+  });
+}
 
 // The server activation (The server will not run if the Database doesn't run properly first)
 async function startServer() {
   try {
     await connectDB();
     server.listen(port, () => {
-      console.log(`Server listening on port ${port}`);
+      console.log(`\x1b[32mServer listening on port ${port} \x1b[0m`);
     });
+    showCurrentTable();
   } catch (error) {
     throw new Error(error.message);
   }

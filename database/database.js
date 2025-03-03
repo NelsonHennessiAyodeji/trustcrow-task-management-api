@@ -8,7 +8,7 @@ const connection = new Client({
   database: process.env.POSTGRES_DATABASE,
 });
 
-// Create the database automatically
+// Create the task table automatically
 function createTaskTable() {
   const createTableQuery = `CREATE TABLE IF NOT EXISTS 
   tasks (

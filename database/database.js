@@ -1,23 +1,24 @@
 const { Client } = require("pg");
 
 const connection = new Client({
-  host: "localhost",
-  user: "postgres",
-  port: 8080,
-  password: "1234",
-  database: "taskDB",
+  host: process.env.POSTGRES_HOST,
+  user: process.env.POSTGRES_USER,
+  port: process.env.POSTGRES_PORT,
+  password: process.env.POSTGRES_PASSWORD,
+  database: process.env.POSTGRES_DATABASE,
 });
 
 // TODO: Create the database automatically
 
-// TODO: Turn Syntax to Async-Await if necessary and implement No-db-failure-server run
-connection
-  .connect()
-  .then(() => {
+// DB Connection Logic
+async function connectDB() {
+  try {
+    await connection.connect();
     console.log("Connected to DB");
-  })
-  .catch((error) => {
-    console.error(error.message);
-  });
+  } catch (error) {
+    console.error("Database error, please fix");
+    throw new Error(error.message);
+  }
+}
 
-module.exports = connection;
+module.exports = { connection, connectDB };

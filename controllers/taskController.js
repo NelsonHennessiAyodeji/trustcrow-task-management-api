@@ -1,4 +1,4 @@
-const { connection: query } = require("../database/database");
+const { pool: query } = require("../database/database");
 const { StatusCodes } = require("http-status-codes");
 
 // Retrieve all tasks logic.

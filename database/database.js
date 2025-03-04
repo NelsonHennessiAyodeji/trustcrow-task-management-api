@@ -1,19 +1,10 @@
-const { Client, Pool } = require("pg");
+const { Pool } = require("pg");
 
 const pool = new Pool({
-  connectionString:
-    "postgresql://the_nse:LDMCtqi0ck8oNGntCC5ev0XNHC6A8Dx7@dpg-cv3if7l2ng1s73816er0-a.oregon-postgres.render.com/mybase_wsm6",
+  connectionString: process.env.POSTGRES_URI,
   ssl: {
-    rejectUnauthorized: false, // Required if Render enforces SSL
+    rejectUnauthorized: false,
   },
-});
-
-const connection = new Client({
-  host: process.env.POSTGRES_HOST,
-  user: process.env.POSTGRES_USER,
-  port: process.env.POSTGRES_PORT,
-  password: process.env.POSTGRES_PASSWORD,
-  database: process.env.POSTGRES_DATABASE,
 });
 
 // Create the task table automatically
@@ -25,7 +16,7 @@ function createTaskTable() {
   description VARCHAR(255) NOT NULL
   );`;
 
-  connection.query(createTableQuery, (err, result) => {
+  pool.query(createTableQuery, (err, result) => {
     if (err) {
       console.error(err.message);
     }
@@ -36,7 +27,7 @@ function createTaskTable() {
 async function connectDB() {
   try {
     await pool.connect(); // Proper way to use `await`
-    console.log("✅ Connected to Render PostgreSQL!");
+    console.log("Connected to Render PostgreSQL!");
     // The prefix "\x1b[32m" and the suffix "\x1b[0m" simply ensures the text is printed in a green tint when i run
     // on the terminal, just to let anyone know that the prompts are expected and you're on the right path
     console.log(
@@ -49,4 +40,4 @@ async function connectDB() {
   }
 }
 
-module.exports = { connection, pool, connectDB };
+module.exports = { pool, connectDB };

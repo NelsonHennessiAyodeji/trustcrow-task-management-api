@@ -1,6 +1,11 @@
 const { pool: query } = require("../database/database");
 const { StatusCodes } = require("http-status-codes");
 
+// Checks if ID is present and is correct
+function isIdValid(id) {
+  return !id || typeof Number.parseInt(id) !== "number";
+}
+
 // Retrieve all tasks logic.
 const getAllTasks = (req, res) => {
   // Query The Database to get all tasks.
@@ -13,8 +18,6 @@ const getAllTasks = (req, res) => {
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
         .json({ "Error msg": err.message });
       return;
-    } else {
-      console.log(allTasks);
     }
 
     res.status(StatusCodes.OK).json(allTasks);
@@ -24,10 +27,10 @@ const getAllTasks = (req, res) => {
 // Retrieve a single task logic.
 const getTask = (req, res) => {
   const { id } = req.params;
-  if (!id || typeof Number.parseInt(id) !== "number") {
-    res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ "Error msg": "Please provide an ID for the task you want" });
+  if (isIdValid(id)) {
+    res.status(StatusCodes.BAD_REQUEST).json({
+      "Error msg": "Please provide a correct ID for the task you want",
+    });
     return;
   }
 
@@ -53,8 +56,6 @@ const getTask = (req, res) => {
           "Error msg": `The task with the ID of ${id} does not exists`,
         });
         return;
-      } else {
-        console.log(task);
       }
 
       res.status(StatusCodes.OK).json(task);
@@ -88,8 +89,6 @@ const createTask = (req, res) => {
         .status(StatusCodes.BAD_REQUEST)
         .json({ "An Error occurred": err.message });
       return;
-    } else {
-      console.log(task);
     }
 
     res.status(StatusCodes.CREATED).json(task);
@@ -100,10 +99,10 @@ const createTask = (req, res) => {
 const updateTask = (req, res) => {
   const { id } = req.params;
   const { title, description } = req.body;
-  if (!id) {
-    res
-      .status(StatusCodes.NOT_FOUND)
-      .json({ "Error msg": "Please provide an ID for the task you want" });
+  if (isIdValid(id)) {
+    res.status(StatusCodes.NOT_FOUND).json({
+      "Error msg": "Please provide a correct ID for the task you want",
+    });
     return;
   } else if (!title || !description) {
     res
@@ -128,8 +127,6 @@ const updateTask = (req, res) => {
       res.status(StatusCodes.NOT_FOUND).json({
         "Error msg": "The task youre trying to update does not exist",
       });
-    } else {
-      console.log(task);
     }
 
     res.status(StatusCodes.OK).json(task);
@@ -139,10 +136,10 @@ const updateTask = (req, res) => {
 // Delete a task.
 const deleteTask = (req, res) => {
   const { id } = req.params;
-  if (!id) {
-    res
-      .status(StatusCodes.NOT_FOUND)
-      .json({ "Error msg": "Please provide an ID for the task you want" });
+  if (isIdValid(id)) {
+    res.status(StatusCodes.NOT_FOUND).json({
+      "Error msg": "Please provide a correct ID for the task you want",
+    });
     return;
   }
 
@@ -160,8 +157,6 @@ const deleteTask = (req, res) => {
         "Error msg": "The task youre trying to delete does not exist",
       });
       return;
-    } else {
-      console.log(`The task With id of ${id} was deleted successfully`);
     }
 
     res

@@ -10,7 +10,7 @@ const YAML = require("yamljs");
 const swaggerDocument = YAML.load("./swagger.yaml");
 
 // Application Module imports
-const { connection: query, connectDB, pool } = require("./database/database");
+const { connection: query, connectDB, client } = require("./database/database");
 const taskRouter = require("./routers/taskRouter");
 
 // Whether this project's envionment is in production or development,
@@ -54,13 +54,10 @@ async function startServer() {
         description VARCHAR(255) NOT NULL
     );`;
 
-    const client = await pool.connect(); // Proper way to use `await`
-    console.log("✅ Connected to Render PostgreSQL!");
+    await connectDB();
 
     await client.query(createTableQuery);
     console.log("✅ Tasks table checked/created successfully!");
-
-    client.release(); // Release client back to the pool
 
     server.listen(port, () => {
       console.log(`\x1b[32mServer listening on port ${port} \x1b[0m`);

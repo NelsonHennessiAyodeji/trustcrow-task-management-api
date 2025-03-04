@@ -1,4 +1,12 @@
-const { Client } = require("pg");
+const { Client, Pool } = require("pg");
+
+const pool = new Pool({
+  connectionString:
+    "postgresql://the_nse:LDMCtqi0ck8oNGntCC5ev0XNHC6A8Dx7@dpg-cv3if7l2ng1s73816er0-a.oregon-postgres.render.com/mybase_wsm6",
+  ssl: {
+    rejectUnauthorized: false, // Required if Render enforces SSL
+  },
+});
 
 const connection = new Client({
   host: process.env.POSTGRES_HOST,
@@ -40,4 +48,4 @@ async function connectDB() {
   }
 }
 
-module.exports = { connection, connectDB };
+module.exports = { connection, pool, connectDB };

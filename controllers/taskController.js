@@ -24,7 +24,7 @@ const getAllTasks = (req, res) => {
 // Retrieve a single task logic.
 const getTask = (req, res) => {
   const { id } = req.params;
-  if (!id) {
+  if (!id || typeof Number.parseInt(id) !== "number") {
     res
       .status(StatusCodes.BAD_REQUEST)
       .json({ "Error msg": "Please provide an ID for the task you want" });
@@ -32,35 +32,48 @@ const getTask = (req, res) => {
   }
 
   // Query The Database to get a single task.
-  const getTaskQuery = `SELECT * FROM tasks WHERE id = $1`;
-  query.query(getTaskQuery, [id], (err, result) => {
-    const task = result.rows[0];
-    if (err) {
-      console.error(err.message);
-      res.status(StatusCodes.BAD_REQUEST).json({ "Error msg": err.message });
-      return;
-    } else if (!task) {
-      res.status(StatusCodes.BAD_REQUEST).json({
-        "Error msg": `The task with the ID of ${id} does not exists`,
-      });
-      return;
-    } else {
-      console.log(task);
-    }
+  try {
+    const getTaskQuery = `SELECT * FROM tasks WHERE id = $1`;
+    query.query(getTaskQuery, [id], (err, result) => {
+      let task;
+      if (result !== undefined) {
+        task = result.rows[0];
+      } else {
+        res
+          .status(StatusCodes.BAD_REQUEST)
+          .json({ "Error msg": "The id should be of a whole number type" });
+        return;
+      }
+      if (err) {
+        console.error(err.message);
+        res.status(StatusCodes.BAD_REQUEST).json({ "Error msg": err.message });
+        return;
+      } else if (!task) {
+        res.status(StatusCodes.NOT_FOUND).json({
+          "Error msg": `The task with the ID of ${id} does not exists`,
+        });
+        return;
+      } else {
+        console.log(task);
+      }
 
-    res.status(StatusCodes.OK).json(task);
-  });
+      res.status(StatusCodes.OK).json(task);
+    });
+  } catch (error) {
+    console.error(error.message);
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ "Error msg": `${error.message}` });
+  }
 };
 
 // Create a new task logic.
 const createTask = (req, res) => {
   const { title, description } = req.body;
   if (!title || !description) {
-    res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({
-        "Err msg": "Please fill the Title and Description field correctly",
-      });
+    res.status(StatusCodes.BAD_REQUEST).json({
+      "Err msg": "Please fill the Title and Description field correctly",
+    });
     return;
   }
 
@@ -104,12 +117,17 @@ const updateTask = (req, res) => {
   const taskData = [title, description, id];
   query.query(updateTaskQuery, taskData, (err, result) => {
     const task = result.rows[0];
+    result.rows[0];
     if (err) {
       console.error(err.message);
       res
         .status(StatusCodes.BAD_REQUEST)
         .json({ "An Error occurred": err.message });
       return;
+    } else if (result.rowCount === 0) {
+      res.status(StatusCodes.NOT_FOUND).json({
+        "Error msg": "The task youre trying to update does not exist",
+      });
     } else {
       console.log(task);
     }
@@ -147,7 +165,7 @@ const deleteTask = (req, res) => {
     }
 
     res
-      .status(StatusCodes.ACCEPTED)
+      .status(StatusCodes.OK)
       .json({ msg: `The task With id of ${id} was deleted successfully` });
   });
 };

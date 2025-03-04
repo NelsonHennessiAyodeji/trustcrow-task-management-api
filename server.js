@@ -59,7 +59,7 @@ async function startServer() {
       description VARCHAR(255) NOT NULL
       );`;
 
-    connection.query(createTableQuery, (err, result) => {
+    pool.query(createTableQuery, (err, result) => {
       if (err) {
         console.error(err.message);
       }

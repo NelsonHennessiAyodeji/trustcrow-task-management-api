@@ -4,7 +4,7 @@ Please note that there will be a 30 - 60 seconds delay at first,but after then, 
 
 ## To Set up: 
 * Download the repo
-* Install all requirement by running "npm intall"...
+* Install all requirement by running "npm intall" in your editor terminal.
 * create your .env file with the variable: P"OSTGRES_URI=[input your Postgres SQL database uri string here]"
 * Then run "npm start"
 

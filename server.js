@@ -10,7 +10,7 @@ const YAML = require("yamljs");
 const swaggerDocument = YAML.load("./swagger.yaml");
 
 // Application Module imports
-const { connection: query, connectDB, client } = require("./database/database");
+const { connection: query, connectDB, pool } = require("./database/database");
 const taskRouter = require("./routers/taskRouter");
 
 // Whether this project's envionment is in production or development,
@@ -56,7 +56,7 @@ async function startServer() {
 
     await connectDB();
 
-    await client.query(createTableQuery);
+    await pool.query(createTableQuery);
     console.log("✅ Tasks table checked/created successfully!");
 
     server.listen(port, () => {

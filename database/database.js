@@ -8,8 +8,6 @@ const pool = new Pool({
   },
 });
 
-let client;
-
 const connection = new Client({
   host: process.env.POSTGRES_HOST,
   user: process.env.POSTGRES_USER,
@@ -37,7 +35,7 @@ function createTaskTable() {
 // DB Connection Logic
 async function connectDB() {
   try {
-    client = await pool.connect(); // Proper way to use `await`
+    await pool.connect(); // Proper way to use `await`
     console.log("✅ Connected to Render PostgreSQL!");
     // The prefix "\x1b[32m" and the suffix "\x1b[0m" simply ensures the text is printed in a green tint when i run
     // on the terminal, just to let anyone know that the prompts are expected and you're on the right path
@@ -51,4 +49,4 @@ async function connectDB() {
   }
 }
 
-module.exports = { connection, pool, client, connectDB };
+module.exports = { connection, pool, connectDB };

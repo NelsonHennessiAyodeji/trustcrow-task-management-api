@@ -52,6 +52,18 @@ async function startServer() {
       .connect()
       .then(() => console.log("Connected to Render PostgreSQL!"))
       .catch((err) => console.error("Connection error", err));
+    const createTableQuery = `CREATE TABLE IF NOT EXISTS 
+      tasks (
+      id SERIAL PRIMARY KEY,
+      title VARCHAR(255) NOT NULL,
+      description VARCHAR(255) NOT NULL
+      );`;
+
+    connection.query(createTableQuery, (err, result) => {
+      if (err) {
+        console.error(err.message);
+      }
+    });
     server.listen(port, () => {
       console.log(`\x1b[32mServer listening on port ${port} \x1b[0m`);
     });

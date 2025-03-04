@@ -48,22 +48,20 @@ function showCurrentTable() {
 // The server activation (The server will not run if the Database doesn't run properly first)
 async function startServer() {
   try {
-    await pool
-      .connect()
-      .then(() => console.log("Connected to Render PostgreSQL!"))
-      .catch((err) => console.error("Connection error", err));
-    const createTableQuery = `CREATE TABLE IF NOT EXISTS 
-      tasks (
-      id SERIAL PRIMARY KEY,
-      title VARCHAR(255) NOT NULL,
-      description VARCHAR(255) NOT NULL
-      );`;
+    const createTableQuery = `CREATE TABLE IF NOT EXISTS tasks (
+        id SERIAL PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        description VARCHAR(255) NOT NULL
+    );`;
 
-    pool.query(createTableQuery, (err, result) => {
-      if (err) {
-        console.error(err.message);
-      }
-    });
+    const client = await pool.connect(); // Proper way to use `await`
+    console.log("✅ Connected to Render PostgreSQL!");
+
+    await client.query(createTableQuery);
+    console.log("✅ Tasks table checked/created successfully!");
+
+    client.release(); // Release client back to the pool
+
     server.listen(port, () => {
       console.log(`\x1b[32mServer listening on port ${port} \x1b[0m`);
     });

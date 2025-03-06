@@ -6,7 +6,9 @@ Please note that there will be a 30 - 60 seconds delay at first,but after then, 
 * Download the repo
 * Install all requirement by running "npm intall" in your editor terminal.
 * create your .env file with the variable: POSTGRES_URI=[input your Postgres SQL database uri string here]" in your project's root directory (same directory the package.json is).
-* Then run "npm start"
+* run "npm start"
+* in your browser url, type in http://localhost:8000/
+* you should be able to use the app and view its documentation there.
 
 ## Tech Stack:
 ### Frontend
